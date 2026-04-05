@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h1>In-Class Mini App: A Data-Driven List</h1>
+
+    <input type="text" id="newTask" placeholder="enter a new task"/>
+    <button id="addTask">Add Task</button>
+    <button id="clearAll">Delete All</button>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        var taskList = [
+            {text: "Study JavaScript", completed: false},
+            {text: "Do homework", completed: true},
+            {text: "Go to gym", completed: false}
+        ];
+
+        var taskButton = document.querySelector('#addTask');
+        var clearButton = document.querySelector('#clearAll');
+        var taskInput = document.querySelector('#newTask');
+
+        function addTask(task){
+            if (task.trim() === "") {
+                alert("Please enter a task!");
+                return;
+            }
+            taskList.push({text: task, completed: false});
+        }
+
+        function renderList(){
+            var listElement = document.querySelector('#taskList');  
+            listElement.innerHTML = ""; 
+
+            for (var i = 0; i < taskList.length; i++){
+                var completedClass = taskList[i].completed ? "completed" : "";
+
+                var listItem = `
+                    <li>
+                        <input type="checkbox" ${taskList[i].completed ? "checked" : ""} onchange="toggleTask(${i})">
+                        <span class="${completedClass}">${taskList[i].text}</span>
+                        <button onclick="removeTask(${i})">X</button>
+                    </li>
+                `;
+
+                listElement.innerHTML += listItem;
+            }
+        }
+
+        function toggleTask(i) {
+            taskList[i].completed = !taskList[i].completed;
+            renderList();
+        }
+
+        function removeTask(i) {
+            taskList.splice(i, 1);
+            renderList();
+        }
+
+        clearButton.addEventListener("click", function(){
+            taskList = [];
+            renderList();
+        });
+
+        taskButton.addEventListener("click", function(){
+            var taskText = taskInput.value;
+
+            addTask(taskText);
+
+            taskInput.value = "";
+            taskInput.focus();
+
+            renderList();
+        });
+
+        renderList();
+    </script>
+</body>
+</html>
