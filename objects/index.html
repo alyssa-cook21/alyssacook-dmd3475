@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Learning About Objects
+        </title>
+    </head>
+    <body>
+        <h1>
+            Learning About Objects
+
+        </h1>
+         <div id="directory">
+                <!-- for every object in the directory variable, print it out here -->
+            </div>
+            <input type="text" id="nameInput" placeholder="Name">
+            <select id="roleInput" placeholder="Role">
+                <option value=" "> </option>
+                <option value="Student">Student</option>
+                <option value="Faculty">Faculty</option>
+            </select>
+            <button id="actionButton" onclick="savePerson()">Add Person</button>
+            <button id="cancelButton" onclick="cancelEdit()" style="display:none;">Cancel</button>
+
+        <script>
+            var age = 19;
+            var name = "Alyssa";
+            var list = [];
+            var isOld = true;
+
+            var aj = {
+                name: "Alyssa",
+                age: 19,
+                list: ['Go to rehearsal', 'Go to work'],
+                isOld: true,
+
+            };
+
+            console.log(aj);
+
+            var directory = [
+                {
+                    name: "Joel",
+                    role: "Faculty",
+                },
+
+                {
+                    name: "Sarah",
+                    role: "Student",
+                },
+
+                {
+                    name: "Alyssa",
+                    role: "Student",
+                }
+            ];
+
+            var editingIndex = -1;
+
+            function renderDirectory (){
+                var directoryEl = document.getElementById("directory");
+                directoryEl.innerHTML = "";
+
+                directory.forEach(function(person, index) {
+                    var p = document.createElement('p');
+                    p.textContent = person.name + " - " + person.role + " ";
+
+                    var editButton = document.createElement('button');
+                    editButton.textContent = "Edit";
+                    editButton.onclick = function() {
+                        editPerson(index);
+                    };
+
+                    p.appendChild(editButton);
+                    directoryEl.appendChild(p);
+                });
+            }
+
+            function editPerson(index) {
+                var person = directory[index];
+                document.getElementById("nameInput").value = person.name;
+                document.getElementById("roleInput").value = person.role;
+                editingIndex = index;
+                document.getElementById("actionButton").textContent = "Save Changes";
+                document.getElementById("cancelButton").style.display = "inline";
+            }
+
+            function savePerson() {
+                var nameInput = document.getElementById("nameInput").value.trim();
+                var roleInput = document.getElementById("roleInput").value;
+
+                if (!nameInput || !roleInput || roleInput === " ") {
+                    return;
+                }
+
+                if (editingIndex >= 0) {
+                    directory[editingIndex].name = nameInput;
+                    directory[editingIndex].role = roleInput;
+                    editingIndex = -1;
+                    document.getElementById("actionButton").textContent = "Add Person";
+                    document.getElementById("cancelButton").style.display = "none";
+                } else {
+                    directory.push({ name: nameInput, role: roleInput });
+                }
+
+                document.getElementById("nameInput").value = "";
+                document.getElementById("roleInput").value = "";
+                renderDirectory();
+            }
+
+            function cancelEdit() {
+                editingIndex = -1;
+                document.getElementById("nameInput").value = "";
+                document.getElementById("roleInput").value = "";
+                document.getElementById("actionButton").textContent = "Add Person";
+                document.getElementById("cancelButton").style.display = "none";
+            }
+
+            renderDirectory();
+
+        </script>
+    </body>
+</html>
