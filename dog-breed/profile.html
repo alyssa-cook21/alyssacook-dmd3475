@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Dog Breeds
+        </title>
+    </head>
+
+
+    <body>
+        <h1>
+            Dog Breed Profile
+        </h1>
+
+        <a href="index.html">Back to list</a>
+
+        <ul id="dogBreeds">
+           
+        </ul>
+
+
+        <script>
+            const selectedBreedData = sessionStorage.getItem('selectedBreed');
+            if (selectedBreedData) {
+                const breed = JSON.parse(selectedBreedData);
+                renderBreed(breed);
+            } else {
+                document.getElementById('dogBreeds').innerHTML = '<li>No breed selected</li>';
+            }
+
+            function renderBreed(breed){
+                const ulElement = document.getElementById('dogBreeds');
+                ulElement.innerHTML = ''; 
+                const liElement = document.createElement('li');
+                liElement.innerHTML = `
+                    <strong>${breed.attributes.name}</strong><br>
+                    ${breed.attributes.description}<br>
+                    <em>Life expectancy: ${breed.attributes.life.min} - ${breed.attributes.life.max} years</em><br>
+                    <em>Weight: ${breed.attributes.male_weight.min} - ${breed.attributes.male_weight.max} lbs (male), ${breed.attributes.female_weight.min} - ${breed.attributes.female_weight.max} lbs (female)</em>
+                `;
+                ulElement.appendChild(liElement);
+            }
+             
+        </script>
+
+      
+    </body>
+</html>

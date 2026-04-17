@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Dog Breeds
+        </title>
+    </head>
+
+    <body>
+        <h1>
+            Dog Breeds
+        </h1>
+
+        <ul id="dogBreeds">
+            <a href="profile.html"></a>
+        </ul>
+
+
+        <script>
+            let dogBreeds = [];
+
+            function renderList(){
+                const ulElement = document.getElementById('dogBreeds');
+                ulElement.innerHTML = ''; 
+                for (let i = 0; i < dogBreeds.length; i++){
+                    const breed = dogBreeds[i];
+                    const liElement = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.innerHTML = `<strong>${breed.attributes.name}</strong><br>
+                        ${breed.attributes.description}<br>
+                        <em>Life expectancy: ${breed.attributes.life.min} - ${breed.attributes.life.max} years</em><br>
+                        <em>Weight: ${breed.attributes.male_weight.min} - ${breed.attributes.male_weight.max} lbs (male), ${breed.attributes.female_weight.min} - ${breed.attributes.female_weight.max} lbs (female)</em>`;
+                    link.addEventListener('click', function(e){
+                        e.preventDefault();
+                        const breedData = JSON.stringify(breed);
+                        sessionStorage.setItem('selectedBreed', breedData);
+                        window.location.href = 'profile.html';
+                    });
+                    liElement.appendChild(link);
+                    ulElement.appendChild(liElement);
+                }
+            }
+
+            function getDogBreeds(){
+                fetch('https://dogapi.dog/api/v2/breeds?page[size]=10')
+                    .then(response => response.json())
+                    .then(data => {
+                        dogBreeds = data.data;
+                        renderList();
+                    })
+                    .catch(error => console.error('Error fetching dog breeds:', error));
+            }
+
+            getDogBreeds();
+             
+        </script>
+
+      
+    </body>
+</html>
