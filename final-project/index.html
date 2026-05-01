@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Project - Task List</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Limelight&display=swap" rel="stylesheet"> 
+</head>
+
+<body>
+    <h1>Final Project</h1>
+
+    <div class="input-container">
+    <input type="text" id="newTask" placeholder="enter a new task!"/>
+    <button id="addTask">Add Task</button>
+    <button id="clearAll">Delete All</button>
+    <button id="sortByDate">Sort by Due Date</button>
+    </div>
+
+
+    <ul id="taskList"></ul>
+
+    <script>
+        var taskList = [
+            
+        ];
+
+        var taskButton = document.querySelector('#addTask');
+        var clearButton = document.querySelector('#clearAll');
+        var taskInput = document.querySelector('#newTask');
+
+        function addTask(task, dueDate){
+            if (task.trim() === "") {
+                alert("Please enter a task!");
+                return;
+            }
+            taskList.push({text: task, completed: false, dueDate: dueDate || null});
+        }
+
+        function renderList(){
+            var listElement = document.querySelector('#taskList');  
+            listElement.innerHTML = ""; 
+
+            for (var i = 0; i < taskList.length; i++){
+                var completedClass = taskList[i].completed ? "completed" : "";
+                var strikethrough = taskList[i].completed ? "text-decoration: line-through;" : "";
+                var dueDateValue = taskList[i].dueDate || "";
+
+                var listItem = `
+                    <li class="${completedClass}">
+                        <input type="checkbox" id="task-${i}" ${taskList[i].completed ? "checked" : ""} onchange="toggleTask(${i})">
+                        <label for="task-${i}" class="${completedClass}" style="${strikethrough}">${taskList[i].text}</label>
+                        <input type="date" id="dueDate-${i}" value="${dueDateValue}" onchange="updateDueDate(${i}, this.value)">
+                        <button onclick="removeTask(${i})">X</button>
+                    </li>
+                `;
+
+                listElement.innerHTML += listItem;
+            }
+        }
+
+        function updateDueDate(i, date) {
+            taskList[i].dueDate = date;
+        }
+
+        function sortByDueDate() {
+            taskList.sort(function(a, b) {
+                if (!a.dueDate && !b.dueDate) return 0;
+                if (!a.dueDate) return 1;
+                if (!b.dueDate) return -1;
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            });
+            renderList();
+        }
+
+        function toggleTask(i) {
+            taskList[i].completed = !taskList[i].completed;
+            renderList();
+        }
+
+        function removeTask(i) {
+            taskList.splice(i, 1);
+            renderList();
+        }
+
+        clearButton.addEventListener("click", function(){
+            taskList = [];
+            renderList();
+        });
+
+        taskButton.addEventListener("click", function(){
+            var taskText = taskInput.value;
+            addTask(taskText, null);
+
+            taskInput.value = "";
+            taskInput.focus();
+
+            renderList();
+        });
+
+        taskInput.addEventListener("keydown", function(event){
+            if (event.key === "Enter") {
+                var taskText = taskInput.value;
+                addTask(taskText, null);
+
+                taskInput.value = "";
+                taskInput.focus();
+
+                renderList();
+            }
+        });
+
+        var sortButton = document.querySelector('#sortByDate');
+        sortButton.addEventListener("click", sortByDueDate);
+
+        renderList();
+
+    fetch('https://dummyjson.com/todos/random')
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            if (data && data.todo) {
+                addTask(data.todo, null);
+                renderList();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching random task:', error);
+        });
+    </script>
+</body>
+</html>
